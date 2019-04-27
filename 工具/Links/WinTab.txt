@@ -1,0 +1,3 @@
+sendkey lwin down
+sendkey tab press
+sendkey lwin up

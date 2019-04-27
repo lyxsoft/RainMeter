@@ -1,0 +1,199 @@
+;Calndar Line Horizontal
+;[BEGIN CONFIG FILE]===============================
+;This skin is published under GPL license!
+;(original calendar from mepu HUD.Vision 2.0)
+
+[Rainmeter]
+Author=LyxSoft
+Update=1000
+AppVersion=1001001
+;OnRefreshAction=!Execute [!HideMeterGroup Border]
+
+[Variables]
+BorderColor=255,255,255,128
+BatteryLowValue=10
+BarColor=80,255,80,128
+GrnColor=80,255,80,128
+RedColor=255,80,80,128
+
+BackColor=255,255,255,80
+FontColor=255,255,255,238
+FontFace=黑体
+FontSize=10
+
+BatteryX=0
+BatteryY=0
+BatteryWidth=16
+BatteryHeight=30
+BatteryLineWidth=2
+
+PowerInfoLineY=14
+PowerInfoWidth=56
+
+;=============================================
+;  MEASURES
+;=============================================
+
+[MeasurePower]
+Measure=Plugin
+Plugin=Plugins\PowerPlugin.dll
+PowerState=PERCENT
+IfBelowValue=#BatteryLowValue#
+IfBelowAction=!SetOption PowerBar BarColor #RedColor#
+IfEqualValue=#BatteryLowValue#
+IfEqualAction=!SetOption PowerBar BarColor #GrnColor#
+IfAboveValue=#BatteryLowValue#
+IfAboveAction=!SetOption PowerBar BarColor #GrnColor#
+
+[MeasurePowerStatus]
+Measure=Plugin
+Plugin=Plugins\PowerPlugin.dll
+PowerState=STATUS
+
+[MeasurePowerStatus-NoBattery]
+Measure=Calc
+Formula=MeasurePowerStatus
+;IfEqualValue=0
+;IfEqualAction=!Execute [!HideMeterGroup Border][!HideMeterGroup Battery]
+IfAboveValue=0
+IfAboveAction=!Execute [!ShowMeterGroup Border][!ShowMeterGroup Battery]
+
+[MeasurePowerStatus-Charge]
+Measure=Calc
+Formula=MeasurePowerStatus
+IfEqualValue=1
+IfEqualAction=!Execute [!SetOption PowerInfo.Title Text "%1%充电"][!SetOption PowerBar BarColor #GrnColor#]
+IfAboveValue=1
+IfAboveAction=!Execute [!SetOption PowerInfo.Title Text "%1%"]
+
+[MeasurePowerStatus-Low]
+Measure=Calc
+Formula=MeasurePowerStatus
+IfEqualValue=2
+IfEqualAction=!SetOption PowerBar BarColor #RedColor#
+
+[MeasurePowerStatus-Low2]
+Measure=Calc
+Formula=MeasurePowerStatus
+IfEqualValue=3
+IfEqualAction=!SetOption PowerBar BarColor #RedColor#
+
+[MeasurePowerStatus-High]
+Measure=Calc
+Formula=MeasurePowerStatus
+IfEqualValue=4
+IfEqualAction=!SetOption PowerBar BarColor #GrnColor#
+
+[MeasurePowerLifeData]
+Measure=Plugin
+Plugin=Plugins\PowerPlugin.dll
+PowerState=LIFETIME
+Substitute="Unknown":"0"
+
+[MeasurePowerLife]
+Measure=Calc
+Formula=MeasurePowerLifeData/3600
+IfBelowValue=100
+IfBelowAction=!ShowMeter PowerInfo.Text
+IfAboveValue=100
+IfAboveAction=!HideMeter PowerInfo.Text
+
+;================================================
+;  Graphics
+;================================================
+
+[BatteryBorder.Left]
+Meter=Image
+X=#BatteryX#
+Y=(#BatteryY#+#BatteryLineWidth#)
+W=#BatteryLineWidth#
+H=(#BatteryHeight#-#BatteryLineWidth#)
+SolidColor=#BorderColor#
+Group=Border
+
+[BatteryBorder.Top]
+Meter=Image
+X=#BatteryLineWidth#r
+Y=r
+W=(#BatteryWidth#-#BatteryLineWidth#*2)
+H=#BatteryLineWidth#
+SolidColor=#BorderColor#
+Group=Border
+
+[BatteryBorder.Right]
+Meter=Image
+X=(#BatteryWidth#-#BatteryLineWidth#*2)r
+Y=r
+W=#BatteryLineWidth#
+H=(#BatteryHeight#-#BatteryLineWidth#)
+SolidColor=#BorderColor#
+Group=Border
+
+[BatteryBorder.Bottom]
+Meter=Image
+X=(#BatteryX#+#BatteryLineWidth#)
+Y=(#BatteryY#+#BatteryHeight#-#BatteryLineWidth#)
+W=(#BatteryWidth#-#BatteryLineWidth#*2)
+H=#BatteryLineWidth#
+SolidColor=#BorderColor#
+Group=Border
+
+[BatteryBorder.TopHead]
+Meter=Image
+X=(#BatteryX#+#BatteryWidth#/4)
+Y=#BatteryX#
+W=(#BatteryWidth#/2)
+H=#BatteryLineWidth#
+SolidColor=#BorderColor#
+Group=Border
+
+
+[PowerBar]
+MeasureName=MeasurePower
+Meter=BAR
+X=(#BatteryX#+#BatteryLineWidth#*2)
+Y=(#BatteryY#+#BatteryLineWidth#*3)
+W=(#BatteryWidth#-#BatteryLineWidth#*4)
+H=(#BatteryHeight#-#BatteryLineWidth#*5)
+BarColor=#BarColor#
+BarOrientation=VERTICAL
+SolidColor=#BackColor#
+DynamicVariables=1
+Group=Battery
+
+[PowerInfo.Line]
+Meter=Image
+X=(#BatteryX#+#BatteryWidth#)
+Y=#PowerInfoLineY#
+W=#PowerInfoWidth#
+H=#BatteryLineWidth#
+SolidColor=#BorderColor#
+Group=Info
+
+[PowerInfo.Title]
+Meter=String
+MeasureName=MeasurePower
+X=(#BatteryLineWidth#*2)r
+Y=#BatteryHeadY#
+W=(#PowerInfoWidth#-#BatteryLineWidth#*2)
+FontColor=#FontColor#
+FontFace=#FontFace#
+FontSize=#FontSize#
+NumOfDecimals=0
+Text=%1%
+AntiAlias=1
+Group=Info
+
+[PowerInfo.Text]
+Meter=String
+MeasureName=MeasurePowerLife
+X=r
+Y=(#PowerInfoLineY#+#BatteryLineWidth#*2)
+W=r
+FontColor=#FontColor#
+FontFace=#FontFace#
+FontSize=#FontSize#
+NumOfDecimals=1
+Text=%1小时
+AntiAlias=1
+Group=Info
